@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>FreshGuard - Food Freshness Detection</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        /* =========================================================
+           FRESHGUARD SCANNER LAYOUT
+           ========================================================= */
+
+        .scanner-grid {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+            gap: 28px !important;
+            width: 100% !important;
+            align-items: stretch !important;
+            margin-top: 30px !important;
+        }
+
+        .scanner-grid > .card {
+            min-width: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .upload-card,
+        .result-card {
+            min-height: 560px !important;
+            box-sizing: border-box !important;
+        }
+
+        .upload-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Upload area */
+
+        .upload-zone {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+
+            min-height: 330px !important;
+
+            margin-top: 20px !important;
+            padding: 35px 25px !important;
+
+            border: 2px dashed #b9d3ff !important;
+            border-radius: 18px !important;
+
+            background: #f8fbff !important;
+
+            cursor: pointer !important;
+
+            text-align: center !important;
+
+            transition: all 0.25s ease !important;
+            box-sizing: border-box !important;
+        }
+
+        .upload-zone:hover {
+            border-color: #2563eb !important;
+            background: #f1f6ff !important;
+            transform: translateY(-2px);
+        }
+
+        .upload-zone.dragover {
+            border-color: #2563eb !important;
+            background: #edf4ff !important;
+        }
+
+        .upload-icon {
+            width: 72px !important;
+            height: 72px !important;
+
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            background: #eaf2ff !important;
+
+            border-radius: 50% !important;
+
+            font-size: 32px !important;
+
+            margin-bottom: 18px !important;
+        }
+
+        .upload-zone h3 {
+            margin: 0 0 10px 0 !important;
+            font-size: 20px !important;
+            color: #17213a !important;
+        }
+
+        .upload-main-text {
+            margin: 0 0 8px 0 !important;
+            color: #64748b !important;
+            font-size: 14px !important;
+        }
+
+        .upload-or {
+            margin: 8px 0 !important;
+            color: #94a3b8 !important;
+            font-size: 13px !important;
+        }
+
+        .browse-button {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+
+            padding: 12px 24px !important;
+
+            background: #2563eb !important;
+            color: white !important;
+
+            border-radius: 10px !important;
+
+            font-size: 14px !important;
+            font-weight: 600 !important;
+
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+
+            transition: 0.2s ease !important;
+        }
+
+        .browse-button:hover {
+            background: #1d4ed8 !important;
+            transform: translateY(-1px);
+        }
+
+        .upload-format {
+            margin: 14px 0 0 0 !important;
+            color: #94a3b8 !important;
+            font-size: 12px !important;
+        }
+
+        .upload-zone input[type="file"] {
+            display: none !important;
+        }
+
+        /* Selected file */
+
+        .selected-file {
+            display: none;
+
+            align-items: center;
+            gap: 10px;
+
+            margin-top: 14px;
+
+            padding: 12px 15px;
+
+            background: #f5f8ff;
+
+            border: 1px solid #dbe7ff;
+
+            border-radius: 10px;
+
+            color: #334155;
+
+            font-size: 13px;
+
+            overflow: hidden;
+        }
+
+        .selected-file.show {
+            display: flex;
+        }
+
+        #fileName {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Detect button */
+
+        .detect-button {
+            width: 100% !important;
+
+            margin-top: 18px !important;
+
+            padding: 15px 20px !important;
+
+            border: none !important;
+
+            border-radius: 11px !important;
+
+            background: #2563eb !important;
+
+            color: white !important;
+
+            font-size: 15px !important;
+
+            font-weight: 700 !important;
+
+            cursor: pointer !important;
+
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+
+            transition: 0.2s ease !important;
+        }
+
+        .detect-button:hover {
+            background: #1d4ed8 !important;
+            transform: translateY(-1px);
+        }
+
+        /* Preview */
+
+        .preview-container {
+            margin-top: 18px;
+
+            padding: 10px;
+
+            border: 1px solid #e2e8f0;
+
+            border-radius: 12px;
+
+            background: #f8fafc;
+
+            text-align: center;
+        }
+
+        .preview-container img {
+            max-width: 100%;
+            max-height: 180px;
+
+            border-radius: 10px;
+
+            object-fit: contain;
+        }
+
+        /* Result card */
+
+        .result-card {
+            position: relative;
+        }
+
+        .empty-result {
+            flex: 1;
+
+            min-height: 430px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            text-align: center;
+
+            padding: 30px;
+        }
+
+        .empty-icon {
+            width: 78px;
+            height: 78px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #eef5ff;
+
+            font-size: 34px;
+
+            margin-bottom: 20px;
+        }
+
+        .empty-result h3 {
+            margin: 0 0 10px;
+
+            color: #17213a;
+
+            font-size: 22px;
+        }
+
+        .empty-result p {
+            max-width: 350px;
+
+            margin: 0;
+
+            color: #94a3b8;
+
+            line-height: 1.6;
+
+            font-size: 14px;
+        }
+
+        /* Error */
+
+        .error-message {
+            margin-top: 25px;
+
+            padding: 16px;
+
+            background: #fef2f2;
+
+            border: 1px solid #fecaca;
+
+            border-radius: 12px;
+
+            color: #b91c1c;
+
+            font-size: 14px;
+        }
+
+        /* Result status */
+
+        .result-status {
+            margin-top: 22px;
+
+            padding: 22px;
+
+            border-radius: 15px;
+
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-status.fresh {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .result-status.rotten {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .result-status.ripe {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .result-status.unripe {
+            background: #f7fee7;
+            border-color: #d9f99d;
+        }
+
+        .result-status.overripe {
+            background: #fff7ed;
+            border-color: #fed7aa;
+        }
+
+        .status-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .status-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Detected information */
+
+        .detected-info {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 12px;
+
+            margin-top: 18px;
+        }
+
+        .detected-box {
+            padding: 13px 15px;
+
+            background: #f8fbff;
+
+            border: 1px solid #dbe7ff;
+
+            border-radius: 11px;
+        }
+
+        .detected-label {
+            font-size: 10px;
+
+            color: #64748b;
+
+            font-weight: 700;
+
+            letter-spacing: 0.4px;
+        }
+
+        .detected-value {
+            margin-top: 5px;
+
+            font-size: 18px;
+
+            color: #1d4ed8;
+
+            font-weight: 700;
+        }
+
+        /* Confidence */
+
+        .confidence-section {
+            margin-top: 20px;
+        }
+
+        .confidence-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 8px;
+
+            font-size: 13px;
+
+            color: #64748b;
+        }
+
+        .confidence-header strong {
+            color: #2563eb;
+
+            font-size: 15px;
+        }
+
+        .confidence-bar {
+            height: 9px;
+
+            background: #e8eef8;
+
+            border-radius: 999px;
+
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+
+            border-radius: 999px;
+
+            background: #2563eb;
+
+            transition: width 0.5s ease;
+        }
+
+        /* Recommendation */
+
+        .recommendation {
+            display: flex;
+
+            gap: 12px;
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            border-radius: 12px;
+        }
+
+        .recommendation-icon {
+            font-size: 22px;
+        }
+
+        .recommendation strong {
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: #17213a;
+
+            font-size: 14px;
+        }
+
+        .recommendation p {
+            margin: 0;
+
+            color: #64748b;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        /* Samples */
+
+        .samples {
+            display: grid !important;
+
+            grid-template-columns: repeat(4, 1fr) !important;
+
+            gap: 14px !important;
+        }
+
+        .sample {
+            overflow: hidden;
+
+            border: 1px solid #e1e8f2;
+
+            border-radius: 13px;
+
+            background: white;
+
+            transition: 0.2s ease;
+        }
+
+        .sample:hover {
+            transform: translateY(-2px);
+
+            border-color: #b9d3ff;
+
+            box-shadow: 0 8px 22px rgba(30, 64, 175, 0.08);
+        }
+
+        .sample-image {
+            min-height: 125px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #f1f5f9;
+
+            font-size: 58px;
+        }
+
+        .sample-info {
+            padding: 12px;
+
+            text-align: center;
+        }
+
+        .sample-info strong {
+            display: block;
+
+            color: #17213a;
+
+            font-size: 14px;
+
+            margin-bottom: 5px;
+        }
+
+        .sample-info span {
+            color: #94a3b8;
+
+            font-size: 11px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 1000px) {
+
+            .scanner-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .upload-card,
+            .result-card {
+                min-height: auto !important;
+            }
+
+            .samples {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .samples {
+                grid-template-columns: 1fr !important;
+            }
+
+            .detected-info {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-zone {
+                min-height: 280px !important;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVIGATION
+     ========================================================= -->
+
+<nav class="navbar">
+
+    <div class="nav-container">
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🍎
+            </div>
+
+            <div class="brand-text">
+
+                <div class="brand-name">
+                    FreshGuard
+                </div>
+
+                <div class="brand-subtitle">
+                    Visual food freshness inspection & classification
+                </div>
+
+            </div>
+
+            <span class="brand-badge">
+                QUALITY INSPECTOR
+            </span>
+
+        </div>
+
+
+        <!-- NAVIGATION -->
+
+        <div class="nav-center">
+
+            <a href="{{ url_for('home') }}"
+               class="nav-link active">
+
+                🔍 Freshness Scanner
+
+            </a>
+
+
+            <a href="{{ url_for('records') }}"
+               class="nav-link">
+
+                📋 Inspection Records
+
+            </a>
+
+        </div>
+
+
+        <!-- USER -->
+
+        <div class="nav-user">
+
+            <div class="user-avatar">
+                {{ user_name[0]|upper }}
+            </div>
+
+            <div class="user-details">
+
+                <div class="user-name">
+                    {{ user_name }}
+                </div>
+
+                <div class="user-role">
+                    {{ user_role }}
+                </div>
+
+            </div>
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     MAIN CONTENT
+     ========================================================= -->
+
+<main class="main-container">
+
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="hero-section">
+
+        <div class="hero-badge">
+            🛡️ Intelligent Food Quality Inspection
+        </div>
+
+        <h1>
+            Food Freshness Detection
+        </h1>
+
+        <p>
+            Automated visual freshness and ripeness detection
+            using deep learning and computer vision.
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         MULTI-FRUIT SAMPLES
+         ===================================================== -->
+
+    <section class="card section-card">
+
+        <div class="section-header">
+
+            <div class="section-title">
+
+                <span>
+                    ⚡
+                </span>
+
+                MULTI-FRUIT INSPECTION SAMPLES
+
+            </div>
+
+            <div class="section-description">
+                18-class multi-fruit freshness detection
+            </div>
+
+        </div>
+
+
+        <div class="samples">
+
+
+            <!-- APPLE -->
+
+            <div class="sample">
+
+                <div class="sample-image">
+                    🍎
+                </div>
+
+                <div class="sample-info">
+
+                    <strong>
+                        Apple
+                    </strong>
+
+                    <span>
+                        Fresh / Rotten
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- GRAPE -->
+
+            <div class="sample">
+
+                <div class="sample-image">
+                    🍇
+                </div>
+
+                <div class="sample-info">
+
+                    <strong>
+                        Grape
+                    </strong>
+
+                    <span>
+                        Fresh / Rotten
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- GUAVA -->
+
+            <div class="sample">
+
+                <div class="sample-image">
+                    🍈
+                </div>
+
+                <div class="sample-info">
+
+                    <strong>
+                        Guava
+                    </strong>
+
+                    <span>
+                        Fresh / Rotten
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- JUJUBE -->
+
+            <div class="sample">
+
+                <div class="sample-image">
+                    🍒
+                </div>
+
+                <div class="sample-info">
+
+                    <strong>
+                        Jujube
+                    </strong>
+
+                    <span>
+                        Fresh / Rotten
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ORANGE -->
+
+            <div class="sample">
+
+                <div class="sample-image">
+                    🍊
+                </div>
+
+                <div class="sample-info">
+
+                    <strong>
+                        Orange
+                    </strong>
+
+                    <span>
+                        Fresh / Rotten
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- POMEGRANATE -->
+
+            <div class="sample">
+
+                <div class="sample-image">
+                    🧅
+                </div>
+
+                <div class="sample-info">
+
+                    <strong>
+                        Pomegranate
+                    </strong>
+
+                    <span>
+                        Fresh / Rotten
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STRAWBERRY -->
+
+            <div class="sample">
+
+                <div class="sample-image">
+                    🍓
+                </div>
+
+                <div class="sample-info">
+
+                    <strong>
+                        Strawberry
+                    </strong>
+
+                    <span>
+                        Fresh / Rotten
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- BANANA -->
+
+            <div class="sample">
+
+                <div class="sample-image">
+                    🍌
+                </div>
+
+                <div class="sample-info">
+
+                    <strong>
+                        Banana
+                    </strong>
+
+                    <span>
+                        Unripe / Ripe / Overripe / Rotten
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCANNER
+         ===================================================== -->
+
+    <section class="scanner-grid">
+
+
+        <!-- =================================================
+             LEFT: UPLOAD CARD
+             ================================================= -->
+
+        <div class="card upload-card">
+
+
+            <div class="section-header">
+
+                <div class="section-title">
+
+                    <span>
+                        📤
+                    </span>
+
+                    Produce Image Upload
+
+                </div>
+
+                <div class="section-description">
+                    AI analysis
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ONLY ONE FORM
+                 ================================================= -->
+
+            <form method="POST"
+                  enctype="multipart/form-data"
+                  id="uploadForm"
+                  action="{{ url_for('home') }}">
+
+
+                <label for="image"
+                       class="upload-zone"
+                       id="uploadArea">
+
+
+                    <div class="upload-icon">
+                        📷
+                    </div>
+
+
+                    <h3>
+                        Upload a Fruit Image
+                    </h3>
+
+
+                    <p class="upload-main-text">
+                        Drag & drop your image here
+                    </p>
+
+
+                    <p class="upload-or">
+                        or
+                    </p>
+
+
+                    <span class="browse-button">
+                        Choose Image
+                    </span>
+
+
+                    <p class="upload-format">
+                        JPG, JPEG or PNG
+                    </p>
+
+
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/png,image/jpeg,image/jpg"
+                        required
+                    >
+
+                </label>
+
+
+                <!-- SELECTED FILE -->
+
+                <div class="selected-file"
+                     id="selectedFile">
+
+                    <span>
+                        📄
+                    </span>
+
+                    <span id="fileName">
+                        No image selected
+                    </span>
+
+                </div>
+
+
+                <!-- PREVIEW -->
+
+                <div id="previewContainer"
+                     class="preview-container"
+                     style="display:none;">
+
+                    <img id="preview"
+                         src=""
+                         alt="Selected fruit image">
+
+                </div>
+
+
+                <!-- DETECT -->
+
+                <button type="submit"
+                        class="detect-button">
+
+                    🔍 Detect Freshness
+
+                </button>
+
+
+            </form>
+
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT: RESULT CARD
+             ================================================= -->
+
+        <div class="card result-card">
+
+
+            <div class="section-header">
+
+                <div class="section-title">
+
+                    <span>
+                        🧠
+                    </span>
+
+                    Freshness Detection
+
+                </div>
+
+                <div class="section-description">
+                    AI analysis result
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ERROR
+                 ================================================= -->
+
+            {% if error %}
+
+                <div class="error-message">
+
+                    ⚠️ {{ error }}
+
+                </div>
+
+
+            <!-- =================================================
+                 RESULT
+                 ================================================= -->
+
+            {% elif prediction %}
+
+
+                <!-- RESULT PROCESSING -->
+
+                {% if "_" in prediction %}
+
+                    {% set prediction_parts = prediction.split("_") %}
+
+                    {% set detected_fruit =
+                        prediction_parts[0]|title %}
+
+                    {% set detected_freshness =
+                        prediction_parts[1]|title %}
+
+                {% else %}
+
+                    {% set detected_fruit =
+                        "Banana" %}
+
+                    {% set detected_freshness =
+                        prediction|title %}
+
+                {% endif %}
+
+
+                <!-- RESULT STATUS -->
+
+                <div class="result-status
+
+                    {% if detected_freshness|lower == 'fresh' %}
+                        fresh
+                    {% elif detected_freshness|lower == 'rotten' %}
+                        rotten
+                    {% elif detected_freshness|lower == 'ripe' %}
+                        ripe
+                    {% elif detected_freshness|lower == 'unripe' %}
+                        unripe
+                    {% elif detected_freshness|lower == 'overripe' %}
+                        overripe
+                    {% endif %}
+
+                ">
+
+
+                    <div class="status-title">
+
+
+                        {% if detected_freshness|lower == "fresh" %}
+
+                            🟢 Status: FRESH
+
+                        {% elif detected_freshness|lower == "rotten" %}
+
+                            🔴 Status: ROTTEN
+
+                        {% elif detected_freshness|lower == "ripe" %}
+
+                            🟢 Status: RIPE
+
+                        {% elif detected_freshness|lower == "unripe" %}
+
+                            🔵 Status: UNRIPE
+
+                        {% elif detected_freshness|lower == "overripe" %}
+
+                            🟠 Status: OVERRIPE
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    <div class="status-description">
+
+
+                        {% if detected_freshness|lower == "fresh" %}
+
+                            The {{ detected_fruit }}
+                            appears visually fresh.
+
+                        {% elif detected_freshness|lower == "rotten" %}
+
+                            The {{ detected_fruit }}
+                            shows visual characteristics
+                            associated with spoilage.
+
+                        {% elif detected_freshness|lower == "ripe" %}
+
+                            The banana appears ripe and
+                            visually ready for consumption.
+
+                        {% elif detected_freshness|lower == "unripe" %}
+
+                            The banana appears unripe and
+                            may require additional ripening time.
+
+                        {% elif detected_freshness|lower == "overripe" %}
+
+                            The banana appears overripe and
+                            may be suitable for baking or smoothies.
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    <!-- DETECTED INFORMATION -->
+
+                    <div class="detected-info">
+
+
+                        <div class="detected-box">
+
+                            <div class="detected-label">
+                                DETECTED FRUIT
+                            </div>
+
+                            <div class="detected-value">
+                                {{ detected_fruit }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="detected-box">
+
+                            <div class="detected-label">
+                                FRESHNESS
+                            </div>
+
+                            <div class="detected-value">
+                                {{ detected_freshness }}
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- CONFIDENCE -->
+
+                <div class="confidence-section">
+
+                    <div class="confidence-header">
+
+                        <span>
+                            Confidence
+                        </span>
+
+                        <strong>
+                            {{ confidence }}%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="confidence-bar">
+
+                        <div class="confidence-fill"
+                             style="width: {{ confidence }}%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RECOMMENDATION -->
+
+                <div class="recommendation">
+
+                    <div class="recommendation-icon">
+                        💡
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Recommendation
+                        </strong>
+
+                        <p>
+                            {{ recommendation }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- =================================================
+                     EMPTY RESULT
+                     ================================================= -->
+
+                <div class="empty-result">
+
+                    <div class="empty-icon">
+                        🔬
+                    </div>
+
+                    <h3>
+                        Ready for Inspection
+                    </h3>
+
+                    <p>
+                        Upload a fruit image to begin
+                        AI freshness detection.
+                    </p>
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         MODEL STATISTICS
+         ===================================================== -->
+
+    <section class="stats">
+
+
+        <div class="stat">
+
+            <div class="stat-value">
+                94.70%
+            </div>
+
+            <div class="stat-label">
+                TEST ACCURACY
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-value">
+                18
+            </div>
+
+            <div class="stat-label">
+                DETECTION CLASSES
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-value">
+                224×224
+            </div>
+
+            <div class="stat-label">
+                INPUT IMAGE
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-value">
+                CNN
+            </div>
+
+            <div class="stat-label">
+                DEEP LEARNING
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         INFORMATION CARDS
+         ===================================================== -->
+
+    <section class="info-grid">
+
+
+        <!-- MODEL -->
+
+        <div class="card info-card">
+
+            <div class="info-icon">
+                🧠
+            </div>
+
+            <h3>
+                Deep Learning Model
+            </h3>
+
+            <p>
+                The system uses MobileNetV2 with transfer
+                learning to analyze fruit images and
+                identify their visual freshness condition.
+            </p>
+
+        </div>
+
+
+        <!-- DETECTION -->
+
+        <div class="card info-card">
+
+            <div class="info-icon">
+                🔍
+            </div>
+
+            <h3>
+                Freshness Detection
+            </h3>
+
+            <p>
+                The trained model detects 18 classes across
+                multiple fruits and freshness conditions.
+                Banana includes unripe, ripe, overripe and
+                rotten categories, while the other fruits
+                include fresh and rotten categories.
+            </p>
+
+        </div>
+
+
+        <!-- PERFORMANCE -->
+
+        <div class="card info-card">
+
+            <div class="info-icon">
+                ⚡
+            </div>
+
+            <h3>
+                Fast AI Prediction
+            </h3>
+
+            <p>
+                After an image is uploaded, the trained
+                neural network produces a fruit prediction,
+                freshness condition and confidence score.
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         LIVE INSPECTION STATISTICS
+         ===================================================== -->
+
+    <section class="section-card"
+             style="margin-top:25px;">
+
+
+        <div class="section-header">
+
+
+            <div>
+
+                <h3>
+                    📊 Live Inspection Statistics
+                </h3>
+
+                <p>
+                    Summary of your previous food freshness
+                    inspections.
+                </p>
+
+            </div>
+
+
+            <span class="section-badge">
+                Current Session
+            </span>
+
+
+        </div>
+
+
+        <!-- SIX STATISTICS -->
+
+        <div style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+            gap:16px;
+            margin-top:20px;
+        ">
+
+
+            <!-- TOTAL -->
+
+            <div style="
+                background:#f5f8ff;
+                border:1px solid #dbe7ff;
+                border-radius:16px;
+                padding:22px;
+                text-align:center;
+            ">
+
+                <div style="
+                    font-size:32px;
+                    font-weight:700;
+                    color:#2563eb;
+                ">
+
+                    {{ total_inspections }}
+
+                </div>
+
+                <div style="
+                    margin-top:8px;
+                    font-size:13px;
+                    color:#64748b;
+                    font-weight:600;
+                ">
+
+                    TOTAL INSPECTIONS
+
+                </div>
+
+            </div>
+
+
+            <!-- FRESH -->
+
+            <div style="
+                background:#f0fdf4;
+                border:1px solid #bbf7d0;
+                border-radius:16px;
+                padding:22px;
+                text-align:center;
+            ">
+
+                <div style="
+                    font-size:32px;
+                    font-weight:700;
+                    color:#16a34a;
+                ">
+
+                    {{ fresh_count }}
+
+                </div>
+
+                <div style="
+                    margin-top:8px;
+                    font-size:13px;
+                    color:#64748b;
+                    font-weight:600;
+                ">
+
+                    FRESH
+
+                </div>
+
+            </div>
+
+
+            <!-- ROTTEN -->
+
+            <div style="
+                background:#fef2f2;
+                border:1px solid #fecaca;
+                border-radius:16px;
+                padding:22px;
+                text-align:center;
+            ">
+
+                <div style="
+                    font-size:32px;
+                    font-weight:700;
+                    color:#dc2626;
+                ">
+
+                    {{ rotten_count }}
+
+                </div>
+
+                <div style="
+                    margin-top:8px;
+                    font-size:13px;
+                    color:#64748b;
+                    font-weight:600;
+                ">
+
+                    ROTTEN
+
+                </div>
+
+            </div>
+
+
+            <!-- RIPE -->
+
+            <div style="
+                background:#f0fdf4;
+                border:1px solid #bbf7d0;
+                border-radius:16px;
+                padding:22px;
+                text-align:center;
+            ">
+
+                <div style="
+                    font-size:32px;
+                    font-weight:700;
+                    color:#16a34a;
+                ">
+
+                    {{ ripe_count }}
+
+                </div>
+
+                <div style="
+                    margin-top:8px;
+                    font-size:13px;
+                    color:#64748b;
+                    font-weight:600;
+                ">
+
+                    RIPE
+
+                </div>
+
+            </div>
+
+
+            <!-- UNRIPE -->
+
+            <div style="
+                background:#f7fee7;
+                border:1px solid #d9f99d;
+                border-radius:16px;
+                padding:22px;
+                text-align:center;
+            ">
+
+                <div style="
+                    font-size:32px;
+                    font-weight:700;
+                    color:#65a30d;
+                ">
+
+                    {{ unripe_count }}
+
+                </div>
+
+                <div style="
+                    margin-top:8px;
+                    font-size:13px;
+                    color:#64748b;
+                    font-weight:600;
+                ">
+
+                    UNRIPE
+
+                </div>
+
+            </div>
+
+
+            <!-- OVERRIPE -->
+
+            <div style="
+                background:#fff7ed;
+                border:1px solid #fed7aa;
+                border-radius:16px;
+                padding:22px;
+                text-align:center;
+            ">
+
+                <div style="
+                    font-size:32px;
+                    font-weight:700;
+                    color:#ea580c;
+                ">
+
+                    {{ overripe_count }}
+
+                </div>
+
+                <div style="
+                    margin-top:8px;
+                    font-size:13px;
+                    color:#64748b;
+                    font-weight:600;
+                ">
+
+                    OVERRIPE
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INSPECTION RECORDS
+         ===================================================== -->
+
+    <section class="card section-card"
+             id="records"
+             style="margin-top:25px;">
+
+
+        <div class="section-header">
+
+            <div class="section-title">
+
+                <span>
+                    📋
+                </span>
+
+                Inspection Records
+
+            </div>
+
+            <div class="section-description">
+                Current session
+            </div>
+
+        </div>
+
+
+        <p style="
+            color:#64748b;
+            font-size:13px;
+            line-height:1.7;
+        ">
+
+            Previous inspection history can be viewed from
+            the Inspection Records page. Records include
+            the uploaded image, detected fruit type,
+            freshness category, confidence score and
+            inspection time.
+
+        </p>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         ABOUT FRESHGUARD
+         ===================================================== -->
+
+    <section class="card section-card"
+             style="margin-top:25px;">
+
+
+        <div class="section-header">
+
+            <div class="section-title">
+
+                <span>
+                    ℹ️
+                </span>
+
+                About FreshGuard
+
+            </div>
+
+        </div>
+
+
+        <p style="
+            color:#64748b;
+            font-size:13px;
+            line-height:1.8;
+        ">
+
+            FreshGuard is a Deep Learning based food freshness
+            detection system developed as a student PBL project.
+            It uses a trained MobileNetV2 model to visually
+            classify multiple fruit types and their freshness
+            conditions using an 18-class classification model.
+
+        </p>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         DISCLAIMER
+         ===================================================== -->
+
+    <section class="card section-card"
+             style="margin-top:25px;">
+
+
+        <div class="section-title">
+
+            <span>
+                ⚠️
+            </span>
+
+            Important Note
+
+        </div>
+
+
+        <p style="
+            color:#64748b;
+            font-size:12px;
+            line-height:1.7;
+            margin-top:12px;
+        ">
+
+            This system performs visual image-based freshness
+            and ripeness detection. The prediction is intended
+            as a screening aid and does not guarantee
+            microbiological food safety.
+
+        </p>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
+<footer class="footer">
+
+    <strong>
+        FreshGuard
+    </strong>
+
+    &nbsp; | &nbsp;
+
+    Deep Learning Based Multi-Fruit
+    Freshness Detection
+
+    <br>
+    <br>
+
+    Built using TensorFlow • MobileNetV2 • Flask
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+    /* =========================================================
+       FILE INPUT
+       ========================================================= */
+
+    const imageInput =
+        document.getElementById("image");
+
+    const selectedFile =
+        document.getElementById("selectedFile");
+
+    const fileName =
+        document.getElementById("fileName");
+
+    const uploadArea =
+        document.getElementById("uploadArea");
+
+    const preview =
+        document.getElementById("preview");
+
+    const previewContainer =
+        document.getElementById("previewContainer");
+
+
+    /* =========================================================
+       FILE SELECTION
+       ========================================================= */
+
+    if (imageInput) {
+
+        imageInput.addEventListener(
+            "change",
+            function () {
+
+                if (
+                    this.files &&
+                    this.files.length > 0
+                ) {
+
+                    const file = this.files[0];
+
+
+                    /* File name */
+
+                    if (fileName) {
+
+                        fileName.textContent =
+                            file.name;
+
+                    }
+
+
+                    /* Show selected file */
+
+                    if (selectedFile) {
+
+                        selectedFile.classList.add(
+                            "show"
+                        );
+
+                    }
+
+
+                    /* Image preview */
+
+                    if (
+                        preview &&
+                        previewContainer
+                    ) {
+
+                        const reader =
+                            new FileReader();
+
+
+                        reader.onload =
+                            function (event) {
+
+                                preview.src =
+                                    event.target.result;
+
+                                previewContainer.style.display =
+                                    "block";
+
+                            };
+
+
+                        reader.readAsDataURL(file);
+
+                    }
+
+                }
+
+                else {
+
+                    if (fileName) {
+
+                        fileName.textContent =
+                            "No image selected";
+
+                    }
+
+
+                    if (selectedFile) {
+
+                        selectedFile.classList.remove(
+                            "show"
+                        );
+
+                    }
+
+
+                    if (previewContainer) {
+
+                        previewContainer.style.display =
+                            "none";
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       DRAG AND DROP
+       ========================================================= */
+
+    if (uploadArea) {
+
+
+        uploadArea.addEventListener(
+            "dragover",
+            function (event) {
+
+                event.preventDefault();
+
+                uploadArea.classList.add(
+                    "dragover"
+                );
+
+            }
+        );
+
+
+        uploadArea.addEventListener(
+            "dragleave",
+            function () {
+
+                uploadArea.classList.remove(
+                    "dragover"
+                );
+
+            }
+        );
+
+
+        uploadArea.addEventListener(
+            "drop",
+            function (event) {
+
+                event.preventDefault();
+
+                uploadArea.classList.remove(
+                    "dragover"
+                );
+
+
+                if (
+                    event.dataTransfer.files &&
+                    event.dataTransfer.files.length > 0
+                ) {
+
+                    imageInput.files =
+                        event.dataTransfer.files;
+
+
+                    imageInput.dispatchEvent(
+                        new Event("change")
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       FORM SUBMIT
+       ========================================================= */
+
+    const uploadForm =
+        document.getElementById("uploadForm");
+
+
+    if (uploadForm) {
+
+        uploadForm.addEventListener(
+            "submit",
+            function () {
+
+                const button =
+                    uploadForm.querySelector(
+                        ".detect-button"
+                    );
+
+
+                if (button) {
+
+                    button.innerHTML =
+                        "⏳ Analyzing Image...";
+
+                    button.disabled = true;
+
+                }
+
+            }
+        );
+
+    }
+
+</script>
+
+
+</body>
+
+</html>

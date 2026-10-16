@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>FreshGuard - Inspection Records</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f5f8fc;
+
+            color: #172033;
+
+            min-height: 100vh;
+        }
+
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+
+            height: 74px;
+
+            background: white;
+
+            border-bottom:
+                1px solid #e2e8f0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 6%;
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        .brand-icon {
+
+            width: 48px;
+
+            height: 48px;
+
+            border-radius: 14px;
+
+            background: #2563eb;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 25px;
+        }
+
+
+        .brand-name {
+
+            font-size: 22px;
+
+            font-weight: 700;
+
+            color: #172033;
+        }
+
+
+        .brand-subtitle {
+
+            font-size: 12px;
+
+            color: #8a9ab5;
+
+            margin-top: 3px;
+        }
+
+
+        .nav-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .back-btn {
+
+            text-decoration: none;
+
+            padding: 10px 18px;
+
+            border-radius: 10px;
+
+            border:
+                1px solid #cbd5e1;
+
+            color: #2563eb;
+
+            background: white;
+
+            font-weight: 600;
+
+            font-size: 14px;
+        }
+
+
+        .back-btn:hover {
+
+            background: #eff6ff;
+        }
+
+
+        .logout-btn {
+
+            text-decoration: none;
+
+            color: #dc2626;
+
+            font-weight: 600;
+
+            font-size: 14px;
+        }
+
+
+        /* ================= PAGE ================= */
+
+        .container {
+
+            width: 90%;
+
+            max-width: 1250px;
+
+            margin: 40px auto;
+
+        }
+
+
+        .page-header {
+
+            margin-bottom: 30px;
+        }
+
+
+        .page-header h1 {
+
+            font-size: 32px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .page-header p {
+
+            color: #718096;
+
+            font-size: 15px;
+        }
+
+
+        /* ================= USER CARD ================= */
+
+        .user-card {
+
+            background: white;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 16px;
+
+            padding: 18px 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 5px 18px rgba(15, 23, 42, 0.04);
+        }
+
+
+        .user-info {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        .user-icon {
+
+            width: 42px;
+
+            height: 42px;
+
+            border-radius: 12px;
+
+            background: #2563eb;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-weight: 700;
+
+            font-size: 18px;
+        }
+
+
+        .user-name {
+
+            font-weight: 700;
+
+            font-size: 15px;
+        }
+
+
+        .user-role {
+
+            color: #8a9ab5;
+
+            font-size: 13px;
+
+            margin-top: 3px;
+        }
+
+
+        /* ================= RECORDS CARD ================= */
+
+        .records-card {
+
+            background: white;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 8px 25px rgba(15, 23, 42, 0.05);
+        }
+
+
+        .records-header {
+
+            padding: 22px 25px;
+
+            border-bottom:
+                1px solid #e2e8f0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .records-header h2 {
+
+            font-size: 19px;
+        }
+
+
+        .record-count {
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            padding: 7px 13px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+
+            padding: 70px 30px;
+
+            text-align: center;
+        }
+
+
+        .empty-icon {
+
+            font-size: 55px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .empty h3 {
+
+            font-size: 20px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .empty p {
+
+            color: #8a9ab5;
+
+            font-size: 14px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .scan-btn {
+
+            display: inline-block;
+
+            text-decoration: none;
+
+            background: #2563eb;
+
+            color: white;
+
+            padding: 12px 22px;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+        }
+
+
+        .scan-btn:hover {
+
+            background: #1d4ed8;
+        }
+
+
+        /* ================= RECORD ITEM ================= */
+
+        .record {
+
+            display: grid;
+
+            grid-template-columns:
+                100px
+                1fr
+                160px
+                150px
+                120px;
+
+            align-items: center;
+
+            gap: 20px;
+
+            padding: 20px 25px;
+
+            border-bottom:
+                1px solid #edf2f7;
+        }
+
+
+        .record:last-child {
+
+            border-bottom: none;
+        }
+
+
+        .record-image {
+
+            width: 85px;
+
+            height: 85px;
+
+            border-radius: 12px;
+
+            object-fit: cover;
+
+            border:
+                1px solid #e2e8f0;
+        }
+
+
+        .record-result {
+
+            font-weight: 700;
+
+            font-size: 16px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .record-date {
+
+            color: #94a3b8;
+
+            font-size: 12px;
+        }
+
+
+        .record-label {
+
+            font-size: 11px;
+
+            color: #94a3b8;
+
+            margin-bottom: 5px;
+
+            text-transform: uppercase;
+        }
+
+
+        .record-confidence {
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            color: #2563eb;
+        }
+
+
+        /* ================= STATUS ================= */
+
+        .status {
+
+            display: inline-block;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            text-align: center;
+        }
+
+
+        .status-ripe {
+
+            background: #dcfce7;
+
+            color: #15803d;
+        }
+
+
+        .status-unripe {
+
+            background: #fef9c3;
+
+            color: #a16207;
+        }
+
+
+        .status-overripe {
+
+            background: #ffedd5;
+
+            color: #c2410c;
+        }
+
+
+        .status-rotten {
+
+            background: #fee2e2;
+
+            color: #dc2626;
+        }
+
+
+        /* ================= FOOTER ================= */
+
+        .footer {
+
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 13px;
+
+            padding: 30px;
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 850px) {
+
+            .record {
+
+                grid-template-columns: 80px 1fr;
+
+            }
+
+            .record > div:nth-child(3),
+            .record > div:nth-child(4),
+            .record > div:nth-child(5) {
+
+                grid-column: 2;
+            }
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🍌
+        </div>
+
+        <div>
+
+            <div class="brand-name">
+                FreshGuard
+            </div>
+
+            <div class="brand-subtitle">
+                Visual food freshness inspection & classification
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="nav-right">
+
+        <a
+            href="{{ url_for('home') }}"
+            class="back-btn">
+
+            🔍 Freshness Scanner
+
+        </a>
+
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="logout-btn">
+
+            Logout
+
+        </a>
+
+    </div>
+
+
+</nav>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+    <div class="page-header">
+
+        <h1>
+            Inspection Records
+        </h1>
+
+        <p>
+           View your previous food freshness detection results.
+        </p>
+
+    </div>
+
+
+
+    <!-- ================= USER ================= -->
+
+    <div class="user-card">
+
+
+        <div class="user-info">
+
+            <div class="user-icon">
+
+                {{ user_name[0]|upper }}
+
+            </div>
+
+
+            <div>
+
+                <div class="user-name">
+
+                    {{ user_name }}
+
+                </div>
+
+
+                <div class="user-role">
+
+                    {{ user_role }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <span class="record-count">
+
+                {{ records|length }} Inspections
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ================= RECORDS ================= -->
+
+    <div class="records-card">
+
+
+        <div class="records-header">
+
+            <h2>
+                Recent Inspections
+            </h2>
+
+
+            <span class="record-count">
+
+                Food Freshness Detection
+            </span>
+
+        </div>
+
+
+
+        {% if records %}
+
+
+            {% for record in records %}
+
+
+            <div class="record">
+
+
+                <!-- IMAGE -->
+
+                <div>
+
+                    <img
+                        src="{{ record.image }}"
+                        class="record-image"
+                        alt="Banana inspection image">
+
+                </div>
+
+
+
+                <!-- RESULT -->
+
+               <!-- RESULT -->
+
+<div>
+
+    <div class="record-result">
+
+        {% if record.fruit %}
+
+            {{ record.fruit }}
+
+            <div style="
+                font-size: 13px;
+                color: #64748b;
+                font-weight: 600;
+                margin-top: 4px;
+            ">
+                {{ record.freshness }}
+            </div>
+
+        {% else %}
+
+            {{ record.prediction|title }}
+
+        {% endif %}
+
+    </div>
+
+    <div class="record-date">
+        {{ record.date }}
+    </div>
+
+</div>
+
+
+                <!-- CONFIDENCE -->
+
+                <div>
+
+                    <div class="record-label">
+
+                        Confidence
+
+                    </div>
+
+
+                    <div class="record-confidence">
+
+                        {{ record.confidence }}%
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- USER -->
+
+                <div>
+
+                    <div class="record-label">
+
+                        Inspector
+
+                    </div>
+
+
+                    <div>
+
+                        {{ record.user }}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- STATUS -->
+
+                <div>
+
+
+                   {% if record.prediction == "ripe" %}
+
+    <span class="status status-ripe">
+        ✓ RIPE
+    </span>
+
+{% elif record.prediction == "unripe" %}
+
+    <span class="status status-unripe">
+        ● UNRIPE
+    </span>
+
+{% elif record.prediction == "overripe" %}
+
+    <span class="status status-overripe">
+        ● OVERRIPE
+    </span>
+
+{% elif record.prediction == "rotten" or record.prediction.endswith("_rotten") %}
+
+    <span class="status status-rotten">
+        ⚠ ROTTEN
+    </span>
+
+{% elif record.prediction.endswith("_fresh") %}
+
+    <span class="status status-ripe">
+        ✓ FRESH
+    </span>
+
+{% else %}
+
+    <span class="status status-rotten">
+        ⚠ {{ record.prediction|upper }}
+    </span>
+
+{% endif %}
+
+
+                </div>
+
+
+            </div>
+
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📋
+                </div>
+
+
+                <h3>
+                    No inspection records yet
+                </h3>
+
+
+                <p>
+                    Upload a banana image and perform your first freshness detection.
+                </p>
+
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="scan-btn">
+
+                    Start Inspection →
+
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</main>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+
+    FreshGuard
+    &nbsp; • &nbsp;
+    Food Freshness Detection
+
+</footer>
+
+
+</body>
+
+</html>

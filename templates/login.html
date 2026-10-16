@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FreshGuard - Sign In</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fc;
+            color: #0f172a;
+            min-height: 100vh;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 74px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 8%;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+
+            font-size: 25px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .brand-icon {
+            width: 52px;
+            height: 52px;
+
+            border-radius: 15px;
+
+            background: #2563eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 28px;
+        }
+
+        .demo-top {
+            border: 1px solid #bfdbfe;
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            padding: 10px 20px;
+
+            border-radius: 25px;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            transition: 0.2s;
+        }
+
+        .demo-top:hover {
+            background: #dbeafe;
+        }
+
+
+        /* ================= PAGE ================= */
+
+        .page {
+            min-height: calc(100vh - 74px);
+
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+
+            padding: 50px 20px;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    #ffffff 0,
+                    #f4f7fc 45%,
+                    #edf3fc 100%
+                );
+        }
+
+
+        /* ================= LOGIN CARD ================= */
+
+        .login-card {
+            width: 560px;
+            max-width: 100%;
+
+            background: white;
+
+            border-radius: 22px;
+
+            border: 1px solid #dbe3ef;
+
+            box-shadow:
+                0 20px 50px rgba(15, 23, 42, 0.08);
+
+            overflow: hidden;
+        }
+
+
+        /* ================= TABS ================= */
+
+        .tabs {
+            height: 70px;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            border-bottom: 1px solid #e2e8f0;
+
+            background: white;
+        }
+
+        .tab-link {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 100%;
+            height: 100%;
+
+            text-decoration: none;
+
+            color: #0f172a;
+
+            font-size: 15px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            position: relative;
+
+            z-index: 10;
+
+            transition: 0.2s;
+        }
+
+        .tab-link:hover {
+            color: #2563eb;
+            background: #f8fafc;
+        }
+
+        .tab-link.active {
+            color: #2563eb;
+
+            background: white;
+
+            box-shadow:
+                0 3px 12px rgba(15, 23, 42, 0.08);
+
+            border-radius: 14px;
+        }
+
+
+        /* ================= CONTENT ================= */
+
+        .login-content {
+            padding: 40px;
+        }
+
+        .title {
+            text-align: center;
+
+            font-size: 28px;
+
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 15px;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* ================= ERROR ================= */
+
+        .error {
+            background: #fee2e2;
+
+            border: 1px solid #fecaca;
+
+            color: #dc2626;
+
+            padding: 12px;
+
+            border-radius: 9px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* ================= FORM ================= */
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            margin-bottom: 9px;
+
+            color: #1e293b;
+        }
+
+        .password-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .demo-password {
+            color: #2563eb;
+
+            font-size: 12px;
+
+            text-decoration: none;
+        }
+
+
+        /* ================= INPUT ================= */
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+
+            left: 17px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 17px;
+
+            color: #94a3b8;
+
+            z-index: 2;
+        }
+
+        .input {
+            width: 100%;
+
+            height: 54px;
+
+            border: 1px solid #d8e1ee;
+
+            border-radius: 12px;
+
+            padding: 0 48px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            background: #f8fafc;
+
+            transition: 0.2s;
+        }
+
+        .input:focus {
+            border-color: #2563eb;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+
+        /* ================= PASSWORD EYE ================= */
+
+        .eye {
+            position: absolute;
+
+            right: 17px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            cursor: pointer;
+
+            font-size: 17px;
+
+            color: #94a3b8;
+
+            z-index: 3;
+        }
+
+
+        /* ================= SIGN IN BUTTON ================= */
+
+        .signin-btn {
+            width: 100%;
+
+            height: 54px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .signin-btn:hover {
+            background: #1d4ed8;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* ================= OR ================= */
+
+        .or-section {
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            margin: 28px 0;
+        }
+
+        .or-line {
+            height: 1px;
+
+            background: #e2e8f0;
+
+            flex: 1;
+        }
+
+        .or-text {
+            color: #94a3b8;
+
+            font-size: 13px;
+        }
+
+
+        /* ================= DEMO BUTTON ================= */
+
+        .demo-btn {
+            width: 100%;
+
+            height: 54px;
+
+            border-radius: 11px;
+
+            border: 1px solid #bfdbfe;
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            transition: 0.2s;
+        }
+
+        .demo-btn:hover {
+            background: #dbeafe;
+        }
+
+
+        /* ================= GUEST ================= */
+
+        .guest {
+            display: block;
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            text-decoration: none;
+        }
+
+        .guest:hover {
+            color: #2563eb;
+        }
+
+
+        /* ================= FOOTER ================= */
+
+        .footer {
+            position: fixed;
+
+            bottom: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 40px;
+
+            background: white;
+
+            border-top: 1px solid #e2e8f0;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            color: #94a3b8;
+
+            font-size: 13px;
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .demo-top {
+                display: none;
+            }
+
+            .page {
+                padding: 25px 15px 60px;
+            }
+
+            .login-content {
+                padding: 30px 22px;
+            }
+
+            .title {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- ================================================= -->
+<!-- NAVBAR -->
+<!-- ================================================= -->
+
+<nav class="navbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🍌
+        </div>
+
+        FreshGuard
+
+    </div>
+
+
+    <a
+        href="{{ url_for('guest') }}"
+        class="demo-top">
+
+        ✨ 1-Click Demo Login
+
+    </a>
+
+</nav>
+
+
+
+<!-- ================================================= -->
+<!-- LOGIN PAGE -->
+<!-- ================================================= -->
+
+<main class="page">
+
+
+    <div class="login-card">
+
+
+        <!-- ================= TABS ================= -->
+
+        <div class="tabs">
+
+
+            <!-- SIGN IN -->
+
+            <a
+                href="{{ url_for('login') }}"
+                class="tab-link active">
+
+                Sign In
+
+            </a>
+
+
+            <!-- CREATE ACCOUNT -->
+
+            <a
+                href="{{ url_for('register') }}"
+                class="tab-link">
+
+                Create Account
+
+            </a>
+
+
+        </div>
+
+
+
+        <!-- ================= CONTENT ================= -->
+
+        <div class="login-content">
+
+
+            <h1 class="title">
+                Sign In
+            </h1>
+
+
+            <p class="subtitle">
+                Access your FreshGuard inspection dashboard
+            </p>
+
+
+
+            <!-- ================= ERROR ================= -->
+
+            {% if error %}
+
+            <div class="error">
+                {{ error }}
+            </div>
+
+            {% endif %}
+
+
+
+            <!-- ================= LOGIN FORM ================= -->
+
+            <form
+                method="POST"
+                action="{{ url_for('login') }}">
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            ✉
+                        </span>
+
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="input"
+                            placeholder="Enter your email"
+                            value="deepak123@gmail.com"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+
+                    <div class="password-row">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+
+                        <span class="demo-password">
+                            Demo: 123456
+                        </span>
+
+                    </div>
+
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            🔒
+                        </span>
+
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="input"
+                            placeholder="Enter your password"
+                            required>
+
+
+                        <button
+                            type="button"
+                            class="eye"
+                            onclick="togglePassword()">
+
+                            👁
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SIGN IN -->
+
+                <button
+                    type="submit"
+                    class="signin-btn">
+
+                    Sign In →
+                    
+                </button>
+
+
+            </form>
+
+
+
+            <!-- ================= OR ================= -->
+
+            <div class="or-section">
+
+                <div class="or-line"></div>
+
+                <span class="or-text">
+                    OR
+                </span>
+
+                <div class="or-line"></div>
+
+            </div>
+
+
+
+            <!-- ================= DEMO LOGIN ================= -->
+
+            <a
+                href="{{ url_for('guest') }}"
+                class="demo-btn">
+
+                ✨ One-Click Login as Demo Inspector
+
+            </a>
+
+
+
+            <!-- ================= GUEST ================= -->
+
+            <a
+                href="{{ url_for('guest') }}"
+                class="guest">
+
+                Continue as guest →
+
+            </a>
+
+
+        </div>
+
+    </div>
+
+</main>
+
+
+
+<!-- ================================================= -->
+<!-- FOOTER -->
+<!-- ================================================= -->
+
+<footer class="footer">
+
+    FreshGuard
+    &nbsp; • &nbsp;
+    Food Freshness Detection
+
+</footer>
+
+
+
+<!-- ================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ================================================= -->
+
+<script>
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("password");
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+    } else {
+
+        password.type = "password";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+</html>
