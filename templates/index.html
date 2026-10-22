@@ -18,15 +18,14 @@
            FRESHGUARD SCANNER LAYOUT
            ========================================================= */
 
-        .scanner-grid {
-            display: grid !important;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-            gap: 28px !important;
-            width: 100% !important;
-            align-items: stretch !important;
-            margin-top: 30px !important;
-        }
-
+     .scanner-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 24px !important;
+    width: 100% !important;
+    align-items: stretch !important;
+    margin-top: 30px !important;
+}
         .scanner-grid > .card {
             min-width: 0 !important;
             width: 100% !important;
@@ -177,19 +176,7 @@
             color: #334155;
 
             font-size: 13px;
-
-            overflow: hidden;
-        }
-
-        .selected-file.show {
-            display: flex;
-        }
-
-        #fileName {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+                           }
 
         /* Detect button */
 
@@ -359,6 +346,7 @@
             background: #f7fee7;
             border-color: #d9f99d;
         }
+                }
 
         .result-status.overripe {
             background: #fff7ed;
@@ -381,41 +369,29 @@
 
         .detected-info {
             display: grid;
-
             grid-template-columns: 1fr 1fr;
-
             gap: 12px;
-
             margin-top: 18px;
         }
 
         .detected-box {
             padding: 13px 15px;
-
             background: #f8fbff;
-
             border: 1px solid #dbe7ff;
-
             border-radius: 11px;
         }
 
         .detected-label {
             font-size: 10px;
-
             color: #64748b;
-
             font-weight: 700;
-
             letter-spacing: 0.4px;
         }
 
         .detected-value {
             margin-top: 5px;
-
             font-size: 18px;
-
             color: #1d4ed8;
-
             font-weight: 700;
         }
 
@@ -427,41 +403,29 @@
 
         .confidence-header {
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             margin-bottom: 8px;
-
             font-size: 13px;
-
             color: #64748b;
         }
 
         .confidence-header strong {
             color: #2563eb;
-
             font-size: 15px;
         }
 
         .confidence-bar {
             height: 9px;
-
             background: #e8eef8;
-
             border-radius: 999px;
-
             overflow: hidden;
         }
 
         .confidence-fill {
             height: 100%;
-
             border-radius: 999px;
-
             background: #2563eb;
-
             transition: width 0.5s ease;
         }
 
@@ -469,17 +433,11 @@
 
         .recommendation {
             display: flex;
-
             gap: 12px;
-
             margin-top: 20px;
-
             padding: 15px;
-
             background: #f8fafc;
-
             border: 1px solid #e2e8f0;
-
             border-radius: 12px;
         }
 
@@ -489,110 +447,85 @@
 
         .recommendation strong {
             display: block;
-
             margin-bottom: 4px;
-
             color: #17213a;
-
             font-size: 14px;
         }
 
         .recommendation p {
             margin: 0;
-
             color: #64748b;
-
             font-size: 13px;
-
             line-height: 1.5;
         }
 
         /* Samples */
 
-        .samples {
-            display: grid !important;
-
-            grid-template-columns: repeat(4, 1fr) !important;
-
-            gap: 14px !important;
-        }
+       .samples {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
 
         .sample {
             overflow: hidden;
-
             border: 1px solid #e1e8f2;
-
             border-radius: 13px;
-
             background: white;
-
             transition: 0.2s ease;
         }
 
         .sample:hover {
             transform: translateY(-2px);
-
             border-color: #b9d3ff;
-
             box-shadow: 0 8px 22px rgba(30, 64, 175, 0.08);
         }
 
         .sample-image {
-            min-height: 125px;
-
+            height: 130px;
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
             background: #f1f5f9;
-
             font-size: 58px;
         }
 
         .sample-info {
             padding: 12px;
-
             text-align: center;
         }
 
         .sample-info strong {
             display: block;
-
             color: #17213a;
-
             font-size: 14px;
-
             margin-bottom: 5px;
         }
 
         .sample-info span {
             color: #94a3b8;
-
             font-size: 11px;
         }
 
         /* Responsive */
 
-        @media (max-width: 1000px) {
-
-            .scanner-grid {
-                grid-template-columns: 1fr !important;
-            }
+       @media (max-width: 700px) {
+    .scanner-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
 
             .upload-card,
             .result-card {
                 min-height: auto !important;
             }
 
-            .samples {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-        }
+           .samples {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+}
 
         @media (max-width: 600px) {
-
             .samples {
                 grid-template-columns: 1fr !important;
             }
@@ -611,7 +544,6 @@
 
 
 <body>
-
 
 <!-- =========================================================
      NAVIGATION
@@ -636,7 +568,7 @@
                 </div>
 
                 <div class="brand-subtitle">
-                    Visual food freshness inspection & classification
+                    Visual food freshness inspection &amp; classification
                 </div>
 
             </div>
@@ -647,28 +579,21 @@
 
         </div>
 
-
         <!-- NAVIGATION -->
 
         <div class="nav-center">
 
             <a href="{{ url_for('home') }}"
                class="nav-link active">
-
                 🔍 Freshness Scanner
-
             </a>
-
 
             <a href="{{ url_for('records') }}"
                class="nav-link">
-
                 📋 Inspection Records
-
             </a>
 
         </div>
-
 
         <!-- USER -->
 
@@ -692,9 +617,7 @@
 
             <a href="{{ url_for('logout') }}"
                class="logout-link">
-
                 Logout
-
             </a>
 
         </div>
@@ -703,22 +626,19 @@
 
 </nav>
 
-
 <!-- =========================================================
      MAIN CONTENT
      ========================================================= -->
 
 <main class="main-container">
+   
 
-
-    <!-- =====================================================
-         HERO
-         ===================================================== -->
+    <!-- HERO -->
 
     <section class="hero-section">
 
         <div class="hero-badge">
-            🛡️ Intelligent Food Quality Inspection
+                        🛡️ Intelligent Food Quality Inspection
         </div>
 
         <h1>
@@ -734,7 +654,7 @@
 
 
     <!-- =====================================================
-         MULTI-FRUIT SAMPLES
+         MULTI-FRUIT AND VEGETABLE SAMPLES
          ===================================================== -->
 
     <section class="card section-card">
@@ -742,250 +662,140 @@
         <div class="section-header">
 
             <div class="section-title">
-
-                <span>
-                    ⚡
-                </span>
-
-                MULTI-FRUIT INSPECTION SAMPLES
-
+                <span>⚡</span>
+                MULTI-FRUIT &amp; VEGETABLE INSPECTION SAMPLES
             </div>
 
             <div class="section-description">
-                18-class multi-fruit freshness detection
+                18-class multi-fruit + 10-class vegetable freshness detection
             </div>
 
         </div>
-
 
         <div class="samples">
 
-
             <!-- APPLE -->
-
             <div class="sample">
-
-                <div class="sample-image">
-                    🍎
-                </div>
-
+                <div class="sample-image">🍎</div>
                 <div class="sample-info">
-
-                    <strong>
-                        Apple
-                    </strong>
-
-                    <span>
-                        Fresh / Rotten
-                    </span>
-
+                    <strong>Apple</strong>
+                    <span>Fresh / Rotten</span>
                 </div>
-
             </div>
-
 
             <!-- GRAPE -->
-
             <div class="sample">
-
-                <div class="sample-image">
-                    🍇
-                </div>
-
+                <div class="sample-image">🍇</div>
                 <div class="sample-info">
-
-                    <strong>
-                        Grape
-                    </strong>
-
-                    <span>
-                        Fresh / Rotten
-                    </span>
-
+                    <strong>Grape</strong>
+                    <span>Fresh / Rotten</span>
                 </div>
-
             </div>
-
 
             <!-- GUAVA -->
-
             <div class="sample">
-
-                <div class="sample-image">
-                    🍈
-                </div>
-
+                <div class="sample-image">🍈</div>
                 <div class="sample-info">
-
-                    <strong>
-                        Guava
-                    </strong>
-
-                    <span>
-                        Fresh / Rotten
-                    </span>
-
+                    <strong>Guava</strong>
+                    <span>Fresh / Rotten</span>
                 </div>
-
             </div>
-
 
             <!-- JUJUBE -->
-
             <div class="sample">
-
-                <div class="sample-image">
-                    🍒
-                </div>
-
+                <div class="sample-image">🍒</div>
                 <div class="sample-info">
-
-                    <strong>
-                        Jujube
-                    </strong>
-
-                    <span>
-                        Fresh / Rotten
-                    </span>
-
+                    <strong>Jujube</strong>
+                    <span>Fresh / Rotten</span>
                 </div>
-
             </div>
-
 
             <!-- ORANGE -->
-
             <div class="sample">
-
-                <div class="sample-image">
-                    🍊
-                </div>
-
+                <div class="sample-image">🍊</div>
                 <div class="sample-info">
-
-                    <strong>
-                        Orange
-                    </strong>
-
-                    <span>
-                        Fresh / Rotten
-                    </span>
-
+                    <strong>Orange</strong>
+                    <span>Fresh / Rotten</span>
                 </div>
-
             </div>
-
 
             <!-- POMEGRANATE -->
-
             <div class="sample">
-
-                <div class="sample-image">
-                    🧅
-                </div>
-
+                <div class="sample-image">🔴</div>
                 <div class="sample-info">
-
-                    <strong>
-                        Pomegranate
-                    </strong>
-
-                    <span>
-                        Fresh / Rotten
-                    </span>
-
+                    <strong>Pomegranate</strong>
+                    <span>Fresh / Rotten</span>
                 </div>
-
             </div>
-
 
             <!-- STRAWBERRY -->
-
             <div class="sample">
-
-                <div class="sample-image">
-                    🍓
-                </div>
-
+                <div class="sample-image">🍓</div>
                 <div class="sample-info">
-
-                    <strong>
-                        Strawberry
-                    </strong>
-
-                    <span>
-                        Fresh / Rotten
-                    </span>
-
+                    <strong>Strawberry</strong>
+                    <span>Fresh / Rotten</span>
                 </div>
-
             </div>
-
 
             <!-- BANANA -->
-
             <div class="sample">
-
-                <div class="sample-image">
-                    🍌
-                </div>
-
+                <div class="sample-image">🍌</div>
                 <div class="sample-info">
-
-                    <strong>
-                        Banana
-                    </strong>
-
-                    <span>
-                        Unripe / Ripe / Overripe / Rotten
-                    </span>
-
+                    <strong>Banana</strong>
+                    <span>Unripe / Ripe / Overripe / Rotten</span>
                 </div>
-
             </div>
 
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         SCANNER
-         ===================================================== -->
-
-    <section class="scanner-grid">
-
-
-        <!-- =================================================
-             LEFT: UPLOAD CARD
-             ================================================= -->
-
-        <div class="card upload-card">
-
-
-            <div class="section-header">
-
-                <div class="section-title">
-
-                    <span>
-                        📤
-                    </span>
-
-                    Produce Image Upload
-
+            <!-- BELL PEPPER -->
+            <div class="sample">
+                <div class="sample-image">🫑</div>
+                <div class="sample-info">
+                    <strong>Bell Pepper</strong>
+                    <span>Fresh / Rotten</span>
                 </div>
-
-                <div class="section-description">
-                    AI analysis
-                </div>
-
             </div>
 
+            <!-- CARROT -->
+            <div class="sample">
+                <div class="sample-image">🥕</div>
+                <div class="sample-info">
+                    <strong>Carrot</strong>
+                    <span>Fresh / Rotten</span>
+                </div>
+            </div>
 
-            <!-- =================================================
-                 ONLY ONE FORM
-                 ================================================= -->
+        <!-- CUCUMBER -->
+<div class="sample">
+    <div class="sample-image">🥒</div>
+    <div class="sample-info">
+        <strong>Cucumber</strong>
+        <span>Fresh / Rotten</span>
+    </div>
+</div>
+
+<!-- POTATO -->
+<div class="sample">
+    <div class="sample-image">🥔</div>
+    <div class="sample-info">
+        <strong>Potato</strong>
+        <span>Fresh / Rotten</span>
+    </div>
+</div>
+
+<!-- TOMATO -->
+<div class="sample">
+    <div class="sample-image">🍅</div>
+    <div class="sample-info">
+        <strong>Tomato</strong>
+        <span>Fresh / Rotten</span>
+    </div>
+</div>
+
+</div>
+
+<div class="scanner-grid">
+    <div class="card upload-card">
+            <!-- ONLY ONE FORM -->
 
             <form method="POST"
                   enctype="multipart/form-data"
@@ -1004,12 +814,12 @@
 
 
                     <h3>
-                        Upload a Fruit Image
+                        Upload a Fruit or Vegetable Image
                     </h3>
 
 
                     <p class="upload-main-text">
-                        Drag & drop your image here
+                        Drag &amp; drop your image here
                     </p>
 
 
@@ -1044,9 +854,7 @@
                 <div class="selected-file"
                      id="selectedFile">
 
-                    <span>
-                        📄
-                    </span>
+                    <span>📄</span>
 
                     <span id="fileName">
                         No image selected
@@ -1063,7 +871,7 @@
 
                     <img id="preview"
                          src=""
-                         alt="Selected fruit image">
+                         alt="Selected food image">
 
                 </div>
 
@@ -1084,9 +892,7 @@
         </div>
 
 
-        <!-- =================================================
-             RIGHT: RESULT CARD
-             ================================================= -->
+        <!-- RIGHT: RESULT CARD -->
 
         <div class="card result-card">
 
@@ -1110,9 +916,7 @@
             </div>
 
 
-            <!-- =================================================
-                 ERROR
-                 ================================================= -->
+            <!-- ERROR -->
 
             {% if error %}
 
@@ -1123,9 +927,7 @@
                 </div>
 
 
-            <!-- =================================================
-                 RESULT
-                 ================================================= -->
+            <!-- RESULT -->
 
             {% elif prediction %}
 
@@ -1141,14 +943,11 @@
 
                     {% set detected_freshness =
                         prediction_parts[1]|title %}
+                                        {% else %}
 
-                {% else %}
+                    {% set detected_fruit = "Banana" %}
 
-                    {% set detected_fruit =
-                        "Banana" %}
-
-                    {% set detected_freshness =
-                        prediction|title %}
+                    {% set detected_freshness = prediction|title %}
 
                 {% endif %}
 
@@ -1244,7 +1043,7 @@
                         <div class="detected-box">
 
                             <div class="detected-label">
-                                DETECTED FRUIT
+                                DETECTED FOOD
                             </div>
 
                             <div class="detected-value">
@@ -1322,14 +1121,13 @@
                     </div>
 
                 </div>
+                                </div>
 
 
             {% else %}
 
 
-                <!-- =================================================
-                     EMPTY RESULT
-                     ================================================= -->
+                <!-- EMPTY RESULT -->
 
                 <div class="empty-result">
 
@@ -1342,7 +1140,7 @@
                     </h3>
 
                     <p>
-                        Upload a fruit image to begin
+                        Upload a fruit or vegetable image to begin
                         AI freshness detection.
                     </p>
 
@@ -1358,9 +1156,7 @@
     </section>
 
 
-    <!-- =====================================================
-         MODEL STATISTICS
-         ===================================================== -->
+    <!-- MODEL STATISTICS -->
 
     <section class="stats">
 
@@ -1381,7 +1177,7 @@
         <div class="stat">
 
             <div class="stat-value">
-                18
+                28
             </div>
 
             <div class="stat-label">
@@ -1420,9 +1216,7 @@
     </section>
 
 
-    <!-- =====================================================
-         INFORMATION CARDS
-         ===================================================== -->
+    <!-- INFORMATION CARDS -->
 
     <section class="info-grid">
 
@@ -1461,7 +1255,7 @@
             </h3>
 
             <p>
-                The trained model detects 18 classes across
+                The trained model detects 28 classes across
                 multiple fruits and freshness conditions.
                 Banana includes unripe, ripe, overripe and
                 rotten categories, while the other fruits
@@ -1495,15 +1289,11 @@
     </section>
 
 
-    <!-- =====================================================
-         LIVE INSPECTION STATISTICS
-         ===================================================== -->
+    <!-- LIVE INSPECTION STATISTICS -->
 
     <section class="section-card"
              style="margin-top:25px;">
-
-
-        <div class="section-header">
+                     <div class="section-header">
 
 
             <div>
@@ -1681,7 +1471,7 @@
                 border:1px solid #d9f99d;
                 border-radius:16px;
                 padding:22px;
-                text-align:center;
+                                text-align:center;
             ">
 
                 <div style="
@@ -1747,9 +1537,7 @@
     </section>
 
 
-    <!-- =====================================================
-         INSPECTION RECORDS
-         ===================================================== -->
+    <!-- INSPECTION RECORDS -->
 
     <section class="card section-card"
              id="records"
@@ -1783,7 +1571,7 @@
 
             Previous inspection history can be viewed from
             the Inspection Records page. Records include
-            the uploaded image, detected fruit type,
+            the uploaded image, detected food type,
             freshness category, confidence score and
             inspection time.
 
@@ -1793,9 +1581,7 @@
     </section>
 
 
-    <!-- =====================================================
-         ABOUT FRESHGUARD
-         ===================================================== -->
+    <!-- ABOUT FRESHGUARD -->
 
     <section class="card section-card"
              style="margin-top:25px;">
@@ -1824,9 +1610,9 @@
 
             FreshGuard is a Deep Learning based food freshness
             detection system developed as a student PBL project.
-            It uses a trained MobileNetV2 model to visually
-            classify multiple fruit types and their freshness
-            conditions using an 18-class classification model.
+            It uses trained MobileNetV2 models to visually
+            classify multiple fruit types and vegetable types
+            according to their freshness conditions.
 
         </p>
 
@@ -1834,9 +1620,7 @@
     </section>
 
 
-    <!-- =====================================================
-         DISCLAIMER
-         ===================================================== -->
+    <!-- DISCLAIMER -->
 
     <section class="card section-card"
              style="margin-top:25px;">
@@ -1861,179 +1645,106 @@
         ">
 
             This system performs visual image-based freshness
-            and ripeness detection. The prediction is intended
-            as a screening aid and does not guarantee
-            microbiological food safety.
+            detection. Results are predictions from a trained
+            model and should not be treated as a guarantee
+            of food safety.
 
         </p>
 
 
     </section>
-
-
+             
 </main>
 
-
-<!-- =========================================================
-     FOOTER
-     ========================================================= -->
+<!-- FOOTER -->
 
 <footer class="footer">
+        <div class="footer-container">
 
-    <strong>
-        FreshGuard
-    </strong>
+        <div class="footer-left">
 
-    &nbsp; | &nbsp;
+            <strong>FreshGuard</strong>
 
-    Deep Learning Based Multi-Fruit
-    Freshness Detection
+            <p>
+                Deep Learning Based Food Freshness Detection
+            </p>
 
-    <br>
-    <br>
+        </div>
 
-    Built using TensorFlow • MobileNetV2 • Flask
+        <div class="footer-right">
+
+            Built using TensorFlow • MobileNetV2 • Flask
+
+        </div>
+
+    </div>
 
 </footer>
-
-
-<!-- =========================================================
-     JAVASCRIPT
-     ========================================================= -->
+<!-- JAVASCRIPT -->
 
 <script>
 
-    /* =========================================================
-       FILE INPUT
-       ========================================================= */
-
-    const imageInput =
-        document.getElementById("image");
-
-    const selectedFile =
-        document.getElementById("selectedFile");
-
-    const fileName =
-        document.getElementById("fileName");
-
-    const uploadArea =
-        document.getElementById("uploadArea");
-
-    const preview =
-        document.getElementById("preview");
-
-    const previewContainer =
-        document.getElementById("previewContainer");
-
-
-    /* =========================================================
-       FILE SELECTION
-       ========================================================= */
+    const imageInput = document.getElementById("image");
+    const selectedFile = document.getElementById("selectedFile");
+    const fileName = document.getElementById("fileName");
+    const uploadArea = document.getElementById("uploadArea");
+    const preview = document.getElementById("preview");
+    const previewContainer = document.getElementById("previewContainer");
 
     if (imageInput) {
 
-        imageInput.addEventListener(
-            "change",
-            function () {
+        imageInput.addEventListener("change", function () {
 
-                if (
-                    this.files &&
-                    this.files.length > 0
-                ) {
+            if (this.files && this.files.length > 0) {
 
-                    const file = this.files[0];
+                const file = this.files[0];
 
-
-                    /* File name */
-
-                    if (fileName) {
-
-                        fileName.textContent =
-                            file.name;
-
-                    }
-
-
-                    /* Show selected file */
-
-                    if (selectedFile) {
-
-                        selectedFile.classList.add(
-                            "show"
-                        );
-
-                    }
-
-
-                    /* Image preview */
-
-                    if (
-                        preview &&
-                        previewContainer
-                    ) {
-
-                        const reader =
-                            new FileReader();
-
-
-                        reader.onload =
-                            function (event) {
-
-                                preview.src =
-                                    event.target.result;
-
-                                previewContainer.style.display =
-                                    "block";
-
-                            };
-
-
-                        reader.readAsDataURL(file);
-
-                    }
-
+                if (fileName) {
+                    fileName.textContent = file.name;
                 }
 
-                else {
+                if (selectedFile) {
+                    selectedFile.classList.add("show");
+                }
 
-                    if (fileName) {
+                if (preview && previewContainer) {
 
-                        fileName.textContent =
-                            "No image selected";
+                    const reader = new FileReader();
 
-                    }
+                    reader.onload = function (event) {
+                        preview.src = event.target.result;
+                        previewContainer.style.display = "block";
+                    };
 
+                    reader.readAsDataURL(file);
+                }
 
-                    if (selectedFile) {
+            } else {
 
-                        selectedFile.classList.remove(
-                            "show"
-                        );
+                if (fileName) {
+                    fileName.textContent = "No image selected";
+                }
 
-                    }
+                if (selectedFile) {
+                    selectedFile.classList.remove("show");
+                }
 
-
-                    if (previewContainer) {
-
-                        previewContainer.style.display =
-                            "none";
-
-                    }
-
+                if (previewContainer) {
+                    previewContainer.style.display = "none";
                 }
 
             }
-        );
+
+        });
 
     }
 
+  
 
-    /* =========================================================
-       DRAG AND DROP
-       ========================================================= */
+
+    /* DRAG AND DROP */
 
     if (uploadArea) {
-
 
         uploadArea.addEventListener(
             "dragover",
@@ -2041,9 +1752,7 @@
 
                 event.preventDefault();
 
-                uploadArea.classList.add(
-                    "dragover"
-                );
+                uploadArea.classList.add("dragover");
 
             }
         );
@@ -2053,9 +1762,7 @@
             "dragleave",
             function () {
 
-                uploadArea.classList.remove(
-                    "dragover"
-                );
+                uploadArea.classList.remove("dragover");
 
             }
         );
@@ -2067,10 +1774,7 @@
 
                 event.preventDefault();
 
-                uploadArea.classList.remove(
-                    "dragover"
-                );
-
+                uploadArea.classList.remove("dragover");
 
                 if (
                     event.dataTransfer.files &&
@@ -2079,7 +1783,6 @@
 
                     imageInput.files =
                         event.dataTransfer.files;
-
 
                     imageInput.dispatchEvent(
                         new Event("change")
@@ -2093,9 +1796,7 @@
     }
 
 
-    /* =========================================================
-       FORM SUBMIT
-       ========================================================= */
+    /* FORM SUBMIT */
 
     const uploadForm =
         document.getElementById("uploadForm");
@@ -2108,10 +1809,7 @@
             function () {
 
                 const button =
-                    uploadForm.querySelector(
-                        ".detect-button"
-                    );
-
+                    uploadForm.querySelector(".detect-button");
 
                 if (button) {
 

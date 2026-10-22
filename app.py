@@ -10,7 +10,21 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from tensorflow.keras.utils import load_img, img_to_array
+def format_prediction(predicted_class):
+    if "__" in predicted_class:
+        food, status = predicted_class.split("__", 1)
+        return food.replace("_", " ").title(), status.capitalize()
 
+    if "_" in predicted_class:
+        food, status = predicted_class.rsplit("_", 1)
+
+        if status.lower() in ["fresh", "rotten"]:
+            return food.replace("_", " ").title(), status.capitalize()
+
+    if predicted_class.lower() in ["ripe", "unripe", "overripe", "rotten"]:
+        return "Banana", predicted_class.capitalize()
+
+    return predicted_class.replace("_", " ").title(), "Unknown"
 
 # ============================================================
 # FLASK APP
@@ -55,7 +69,36 @@ print("Loading FreshGuard 18-class model...")
 model = tf.keras.models.load_model(MODEL_PATH)
 
 print("FreshGuard model loaded successfully!")
+# ============================================================
+# VEGETABLE MODEL
+# ============================================================
 
+VEGETABLE_MODEL_PATH = os.path.join(
+    PROJECT_DIR,
+    "models",
+    "vegetable_freshness_model.keras"
+)
+
+print("Loading FreshGuard vegetable model...")
+
+vegetable_model = tf.keras.models.load_model(
+    VEGETABLE_MODEL_PATH
+)
+
+print("FreshGuard vegetable model loaded successfully!")
+
+VEGETABLE_CLASS_NAMES = [
+    "Bellpepper__Fresh",
+    "Bellpepper__Rotten",
+    "Carrot__Fresh",
+    "Carrot__Rotten",
+    "Cucumber__Fresh",
+    "Cucumber__Rotten",
+    "Potato__Fresh",
+    "Potato__Rotten",
+    "Tomato__Fresh",
+    "Tomato__Rotten"
+]
 
 # ============================================================
 # CLASS NAMES
@@ -153,7 +196,22 @@ RECOMMENDATIONS = {
         "The banana appears overripe. Check carefully before consuming.",
 
     "rotten":
-        "The banana appears rotten. Avoid consuming it."
+        "The banana appears rotten. Avoid consuming it.",
+        
+    "Bellpepper__Fresh": "The bell pepper appears fresh. Inspect it carefully before consumption.",
+    "Bellpepper__Rotten": "The bell pepper appears rotten. Avoid consuming it.",
+
+    "Carrot__Fresh": "The carrot appears fresh. Inspect it carefully before consumption.",
+    "Carrot__Rotten": "The carrot appears rotten. Avoid consuming it.",
+
+    "Cucumber__Fresh": "The cucumber appears fresh. Inspect it carefully before consumption.",
+    "Cucumber__Rotten": "The cucumber appears rotten. Avoid consuming it.",
+
+    "Potato__Fresh": "The potato appears fresh. Inspect it carefully before consumption.",
+    "Potato__Rotten": "The potato appears rotten. Avoid consuming it.",
+
+    "Tomato__Fresh": "The tomato appears fresh. Inspect it carefully before consumption.",
+    "Tomato__Rotten": "The tomato appears rotten. Avoid consuming it.",
 }
 
 
@@ -207,26 +265,8 @@ def save_records(records):
 # FORMAT PREDICTION
 # ============================================================
 
-def format_prediction(predicted_class):
 
-    if "_" in predicted_class:
 
-        fruit, freshness = predicted_class.split("_", 1)
-
-        fruit = fruit.capitalize()
-
-        freshness = freshness.capitalize()
-
-    else:
-
-        # Banana-only classes
-        # ripe, unripe, overripe, rotten
-
-        fruit = "Banana"
-
-        freshness = predicted_class.capitalize()
-
-    return fruit, freshness
 
 
 # ============================================================
@@ -620,49 +660,101 @@ def home():
                     )
 
 
-                    image_array = img_to_array(
-                        image
-                    )
+                    image_array = np.expand_dims(img_to_array(image), axis=0)
 
-
-                    image_array = np.expand_dims(
-                        image_array,
-                        axis=0
-                    )
 
 
                     # ------------------------------------------------
-                    # PREDICTION
+                    
+                    # ------------------------------------------------
+                    # PREDICTION USING BOTH MODELS
                     # ------------------------------------------------
 
-                    predictions = model.predict(
+                                       # PREDICTION USING BOTH MODELS
+
+                    vegetable_classes = {
+                        "bellpepper",
+                        "carrot",
+                        "cucumber",
+                        "potato",
+                        "tomato"
+                    }
+
+                    # Predict using the vegetable model
+                    vegetable_predictions = vegetable_model.predict(
                         image_array,
                         verbose=0
                     )
 
-
-                    predicted_index = int(
-                        np.argmax(
-                            predictions[0]
-                        )
+                    vegetable_index = int(
+                        np.argmax(vegetable_predictions[0])
                     )
 
-
-                    predicted_class = CLASS_NAMES[
-                        predicted_index
+                    vegetable_class = VEGETABLE_CLASS_NAMES[
+                        vegetable_index
                     ]
 
-
-                    confidence = round(
-                        float(
-                            predictions[0][
-                                predicted_index
-                            ] * 100
-                        ),
-                        2
+                    vegetable_confidence = float(
+                        vegetable_predictions[0][vegetable_index] * 100
                     )
 
+                    if (
+                        vegetable_confidence >= 70
+                        and vegetable_class.split("__")[0].lower()
+                        in vegetable_classes
+                    ):
+                        predicted_class = vegetable_class.replace(
+                            "__", "_"
+                        ).lower()
 
+                        confidence = round(vegetable_confidence, 2)
+
+                    else:
+                        # Use the original fruit model
+                        predictions = model.predict(
+                            image_array,
+                            verbose=0
+                        )
+
+                        predicted_index = int(
+                            np.argmax(predictions[0])
+                        )
+
+                        predicted_class = CLASS_NAMES[predicted_index]
+
+                        confidence = round(
+                            float(predictions[0][predicted_index] * 100),
+                            2
+                        )
+
+                    confidence = round(vegetable_confidence, 2)
+
+                    recommendation = None
+
+                    if vegetable_confidence < 70:
+                        recommendation = (
+                            f"Low confidence ({confidence}%). "
+                            "Please upload a clearer image and verify the result manually."
+                        )
+
+                    # ------------------------------------------------
+                    # FORMAT RESULT
+                    # ------------------------------------------------
+                                  
+                    fruit, freshness = format_prediction(predicted_class)
+                    prediction = predicted_class
+
+                    if recommendation is None:
+                        if freshness == "Fresh":
+                            recommendation = (
+                                f"The {fruit.lower()} appears fresh. "
+                                "Inspect it carefully before consumption."
+                            )
+                        else:
+                            recommendation = (
+                                f"The {fruit.lower()} appears rotten. "
+                                "Avoid consuming it."
+                            )
                     # ------------------------------------------------
                     # FORMAT RESULT
                     # ------------------------------------------------
@@ -671,16 +763,28 @@ def home():
                         predicted_class
                     )
 
-
                     prediction = predicted_class
-
 
                     recommendation = RECOMMENDATIONS.get(
                         predicted_class,
                         "Please inspect the food carefully before consumption."
                     )
+                    # Provide a default recommendation for vegetables
+                    if "_" in predicted_class:
+                        vegetable_name, vegetable_status = (
+                            predicted_class.rsplit("_", 1)
+                        )
 
-
+                        if vegetable_status.lower() == "fresh":
+                            recommendation = (
+                                f"The {vegetable_name.capitalize()} appears fresh. "
+                                "Inspect it carefully before consumption."
+                            )
+                        elif vegetable_status.lower() == "rotten":
+                            recommendation = (
+                                f"The {vegetable_name.capitalize()} appears rotten. "
+                                "Avoid consuming it."
+                            )
                     # ------------------------------------------------
                     # PATH USED BY HTML
                     # ------------------------------------------------
@@ -886,7 +990,50 @@ def records():
 
     )
 
+# =================================================
+# DELETE ONE INSPECTION RECORD
+# =================================================
 
+@app.route("/delete_record/<int:record_index>", methods=["POST"])
+def delete_record(record_index):
+
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+
+    records = load_records()
+
+    current_email = session.get("user_email", "")
+
+    # Keep only records belonging to the current user
+    user_records = [
+        record for record in records
+        if record.get("email", "") == current_email
+    ]
+
+    # Display records newest first
+    user_records.reverse()
+
+    if 0 <= record_index < len(user_records):
+        record_to_delete = user_records[record_index]
+
+        # Remove the selected record
+        records.remove(record_to_delete)
+        save_records(records)
+
+        # Delete its uploaded image, if present
+        image_path = record_to_delete.get("image", "")
+
+        if image_path:
+            image_filename = os.path.basename(image_path)
+            full_image_path = os.path.join(
+                app.config["UPLOAD_FOLDER"],
+                image_filename
+            )
+
+            if os.path.isfile(full_image_path):
+                os.remove(full_image_path)
+
+    return redirect(url_for("records"))
 # ============================================================
 # LOGOUT
 # ============================================================
