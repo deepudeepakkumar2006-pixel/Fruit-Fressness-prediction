@@ -107,6 +107,24 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobil
 
 print("Fruit Unknown Detector loaded successfully!")
 
+# ============================================================
+# VEGETABLE UNKNOWN DETECTOR MODEL
+# ============================================================
+
+VEGETABLE_UNKNOWN_MODEL_PATH = os.path.join(
+    PROJECT_DIR,
+    "models",
+    "vegetable_unknown_detector.keras"
+)
+
+print("Loading FreshGuard Vegetable Unknown Detector...")
+
+vegetable_unknown_model = tf.keras.models.load_model(
+    VEGETABLE_UNKNOWN_MODEL_PATH
+)
+
+print("Vegetable Unknown Detector loaded successfully!")
+
 VEGETABLE_CLASS_NAMES = [
     "Bellpepper__Fresh",
     "Bellpepper__Rotten",
@@ -699,23 +717,29 @@ def home():
                     ).strip().lower()
 
                     if food_category == "vegetable":
-                        predictions = vegetable_model.predict(
-                            image_array,
-                            verbose=0
-                        )
+                        mobilenet_input = mobilenet_preprocess(image_array.copy().astype(np.float32))
+                        unsupported_veg_prob = float(vegetable_unknown_model.predict(mobilenet_input, verbose=0)[0][0])
 
-                        predicted_index = int(
-                            np.argmax(predictions[0])
-                        )
+                        if unsupported_veg_prob >= 0.50:
+                            error = "Unsupported vegetable detected. FreshGuard currently supports Bellpeppers, Carrots, Cucumbers, Potatoes, and Tomatoes."
+                        else:
+                            predictions = vegetable_model.predict(
+                                image_array,
+                                verbose=0
+                            )
 
-                        predicted_class = VEGETABLE_CLASS_NAMES[
-                            predicted_index
-                        ].replace("__", "_").lower()
+                            predicted_index = int(
+                                np.argmax(predictions[0])
+                            )
 
-                        confidence = round(
-                            float(predictions[0][predicted_index] * 100),
-                            2
-                        )
+                            predicted_class = VEGETABLE_CLASS_NAMES[
+                                predicted_index
+                            ].replace("__", "_").lower()
+
+                            confidence = round(
+                                float(predictions[0][predicted_index] * 100),
+                                2
+                            )
 
                     else:
                         mobilenet_input = mobilenet_preprocess(image_array.copy().astype(np.float32))
