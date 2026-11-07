@@ -839,8 +839,8 @@
 <div class="form-group">
     <label for="food_category">Select Food Category</label>
     <select id="food_category" name="food_category" required>
-        <option value="fruit" selected>Fruits</option>
-        <option value="vegetable">Vegetables</option>
+        <option value="fruit" {% if food_category != 'vegetable' %}selected{% endif %}>Fruits</option>
+        <option value="vegetable" {% if food_category == 'vegetable' %}selected{% endif %}>Vegetables</option>
     </select>
 </div>
 

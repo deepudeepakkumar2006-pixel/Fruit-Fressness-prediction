@@ -87,6 +87,26 @@ vegetable_model = tf.keras.models.load_model(
 
 print("FreshGuard vegetable model loaded successfully!")
 
+# ============================================================
+# FRUIT UNKNOWN DETECTOR MODEL
+# ============================================================
+
+FRUIT_UNKNOWN_MODEL_PATH = os.path.join(
+    PROJECT_DIR,
+    "models",
+    "fruit_unknown_detector.keras"
+)
+
+print("Loading FreshGuard Fruit Unknown Detector...")
+
+fruit_unknown_model = tf.keras.models.load_model(
+    FRUIT_UNKNOWN_MODEL_PATH
+)
+
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobilenet_preprocess
+
+print("Fruit Unknown Detector loaded successfully!")
+
 VEGETABLE_CLASS_NAMES = [
     "Bellpepper__Fresh",
     "Bellpepper__Rotten",
@@ -545,6 +565,7 @@ def home():
     image_path = None
 
     error = None
+    food_category = 'fruit'
 
 
     # ========================================================
@@ -697,161 +718,169 @@ def home():
                         )
 
                     else:
-                        predictions = model.predict(
-                            image_array,
-                            verbose=0
-                        )
+                        mobilenet_input = mobilenet_preprocess(image_array.copy().astype(np.float32))
+                        unsupported_prob = float(fruit_unknown_model.predict(mobilenet_input, verbose=0)[0][0])
 
-                        predicted_index = int(
-                            np.argmax(predictions[0])
-                        )
+                        if unsupported_prob >= 0.50:
+                            error = "Unsupported fruit detected. FreshGuard currently supports Apples, Bananas, Grapes, Guava, Jujube, Oranges, Pomegranates, and Strawberries."
+                        else:
+                            predictions = model.predict(
+                                image_array,
+                                verbose=0
+                            )
 
-                        predicted_class = CLASS_NAMES[predicted_index]
+                            predicted_index = int(
+                                np.argmax(predictions[0])
+                            )
 
-                        confidence = round(
-                            float(predictions[0][predicted_index] * 100),
-                            2
-                        )
+                            predicted_class = CLASS_NAMES[predicted_index]
+
+                            confidence = round(
+                                float(predictions[0][predicted_index] * 100),
+                                2
+                            )
 
                     recommendation = None
 
+                    if error is None:
 
-                    # ------------------------------------------------
-                    # FORMAT RESULT
-                    # ------------------------------------------------
+                        # ------------------------------------------------
+                        # FORMAT RESULT
+                        # ------------------------------------------------
                                   
-                    fruit, freshness = format_prediction(predicted_class)
-                    prediction = predicted_class
+                        fruit, freshness = format_prediction(predicted_class)
+                        prediction = predicted_class
 
-                    if recommendation is None:
-                        if freshness == "Fresh":
-                            recommendation = (
-                                f"The {fruit.lower()} appears fresh. "
-                                "Inspect it carefully before consumption."
-                            )
-                        else:
-                            recommendation = (
-                                f"The {fruit.lower()} appears rotten. "
-                                "Avoid consuming it."
-                            )
-                    # ------------------------------------------------
-                    # FORMAT RESULT
-                    # ------------------------------------------------
+                        if recommendation is None:
+                            if freshness == "Fresh":
+                                recommendation = (
+                                    f"The {fruit.lower()} appears fresh. "
+                                    "Inspect it carefully before consumption."
+                                )
+                            else:
+                                recommendation = (
+                                    f"The {fruit.lower()} appears rotten. "
+                                    "Avoid consuming it."
+                                )
+                        # ------------------------------------------------
+                        # FORMAT RESULT
+                        # ------------------------------------------------
 
-                    fruit, freshness = format_prediction(
-                        predicted_class
-                    )
-
-                    prediction = predicted_class
-
-                    recommendation = RECOMMENDATIONS.get(
-                        predicted_class,
-                        "Please inspect the food carefully before consumption."
-                    )
-                    # Provide a default recommendation for vegetables
-                    if "_" in predicted_class:
-                        vegetable_name, vegetable_status = (
-                            predicted_class.rsplit("_", 1)
+                        fruit, freshness = format_prediction(
+                            predicted_class
                         )
 
-                        if vegetable_status.lower() == "fresh":
-                            recommendation = (
-                                f"The {vegetable_name.capitalize()} appears fresh. "
-                                "Inspect it carefully before consumption."
-                            )
-                        elif vegetable_status.lower() == "rotten":
-                            recommendation = (
-                                f"The {vegetable_name.capitalize()} appears rotten. "
-                                "Avoid consuming it."
-                            )
-                    # ------------------------------------------------
-                    # PATH USED BY HTML
-                    # ------------------------------------------------
+                        prediction = predicted_class
 
-                    image_path = "/" + save_path.replace(
-                        "\\",
-                        "/"
-                    )
-
-
-                    # =================================================
-                    # SAVE RECORD
-                    # =================================================
-
-                    records = load_records()
-
-
-                    records.append({
-
-                        "user":
-                            session.get(
-                                "user_name",
-                                "User"
-                            ),
-
-                        "email":
-                            session.get(
-                                "user_email",
-                                ""
-                            ),
-
-                        "prediction":
-                            prediction,
-
-                        "fruit":
-                            fruit,
-
-                        "freshness":
-                            freshness,
-
-                        "confidence":
-                            confidence,
-
-                        "image":
-                            image_path,
-
-                        "date":
-                            datetime.now().strftime(
-                                "%d %b %Y, %I:%M %p"
+                        recommendation = RECOMMENDATIONS.get(
+                            predicted_class,
+                            "Please inspect the food carefully before consumption."
+                        )
+                        # Provide a default recommendation for vegetables
+                        if "_" in predicted_class:
+                            vegetable_name, vegetable_status = (
+                                predicted_class.rsplit("_", 1)
                             )
 
-                    })
+                            if vegetable_status.lower() == "fresh":
+                                recommendation = (
+                                    f"The {vegetable_name.capitalize()} appears fresh. "
+                                    "Inspect it carefully before consumption."
+                                )
+                            elif vegetable_status.lower() == "rotten":
+                                recommendation = (
+                                    f"The {vegetable_name.capitalize()} appears rotten. "
+                                    "Avoid consuming it."
+                                )
+                        # ------------------------------------------------
+                        # PATH USED BY HTML
+                        # ------------------------------------------------
+
+                        image_path = "/" + save_path.replace(
+                            "\\",
+                            "/"
+                        )
 
 
-                    save_records(records)
+                        if error is None:
+                            # =================================================
+                            # SAVE RECORD
+                            # =================================================
+
+                            records = load_records()
 
 
-                    # =================================================
-                    # UPDATE STATISTICS
-                    # =================================================
+                            records.append({
 
-                    all_records = records
+                                "user":
+                                    session.get(
+                                        "user_name",
+                                        "User"
+                                    ),
+
+                                "email":
+                                    session.get(
+                                        "user_email",
+                                        ""
+                                    ),
+
+                                "prediction":
+                                    prediction,
+
+                                "fruit":
+                                    fruit,
+
+                                "freshness":
+                                    freshness,
+
+                                "confidence":
+                                    confidence,
+
+                                "image":
+                                    image_path,
+
+                                "date":
+                                    datetime.now().strftime(
+                                        "%d %b %Y, %I:%M %p"
+                                    )
+
+                            })
 
 
-                    user_records = [
-
-                        record
-
-                        for record in all_records
-
-                        if record.get(
-                            "email",
-                            ""
-                        ) == current_email
-
-                    ]
+                            save_records(records)
 
 
-                    (
-                        total_inspections,
-                        fresh_count,
-                        rotten_count,
-                        ripe_count,
-                        unripe_count,
-                        overripe_count
-                    ) = calculate_statistics(
-                        user_records
-                    )
+                            # =================================================
+                            # UPDATE STATISTICS
+                            # =================================================
+
+                            all_records = records
+
+
+                            user_records = [
+
+                                record
+
+                                for record in all_records
+
+                                if record.get(
+                                    "email",
+                                    ""
+                                ) == current_email
+
+                            ]
+
+
+                            (
+                                total_inspections,
+                                fresh_count,
+                                rotten_count,
+                                ripe_count,
+                                unripe_count,
+                                overripe_count
+                            ) = calculate_statistics(
+                                user_records
+                            )
 
 
                 except Exception as e:
@@ -883,6 +912,7 @@ def home():
         image_path=image_path,
 
         error=error,
+        food_category=food_category,
 
         user_name=session.get(
             "user_name",
