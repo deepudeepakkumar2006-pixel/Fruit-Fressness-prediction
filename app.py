@@ -672,45 +672,31 @@ def home():
 
                                        # PREDICTION USING BOTH MODELS
 
-                    vegetable_classes = {
-                        "bellpepper",
-                        "carrot",
-                        "cucumber",
-                        "potato",
-                        "tomato"
-                    }
 
-                    # Predict using the vegetable model
-                    vegetable_predictions = vegetable_model.predict(
-                        image_array,
-                        verbose=0
-                    )
+                    food_category = request.form.get(
+                        "food_category", "fruit"
+                    ).strip().lower()
 
-                    vegetable_index = int(
-                        np.argmax(vegetable_predictions[0])
-                    )
+                    if food_category == "vegetable":
+                        predictions = vegetable_model.predict(
+                            image_array,
+                            verbose=0
+                        )
 
-                    vegetable_class = VEGETABLE_CLASS_NAMES[
-                        vegetable_index
-                    ]
+                        predicted_index = int(
+                            np.argmax(predictions[0])
+                        )
 
-                    vegetable_confidence = float(
-                        vegetable_predictions[0][vegetable_index] * 100
-                    )
+                        predicted_class = VEGETABLE_CLASS_NAMES[
+                            predicted_index
+                        ].replace("__", "_").lower()
 
-                    if (
-                        vegetable_confidence >= 70
-                        and vegetable_class.split("__")[0].lower()
-                        in vegetable_classes
-                    ):
-                        predicted_class = vegetable_class.replace(
-                            "__", "_"
-                        ).lower()
-
-                        confidence = round(vegetable_confidence, 2)
+                        confidence = round(
+                            float(predictions[0][predicted_index] * 100),
+                            2
+                        )
 
                     else:
-                        # Use the original fruit model
                         predictions = model.predict(
                             image_array,
                             verbose=0
@@ -727,15 +713,8 @@ def home():
                             2
                         )
 
-                    confidence = round(vegetable_confidence, 2)
-
                     recommendation = None
 
-                    if vegetable_confidence < 70:
-                        recommendation = (
-                            f"Low confidence ({confidence}%). "
-                            "Please upload a clearer image and verify the result manually."
-                        )
 
                     # ------------------------------------------------
                     # FORMAT RESULT
