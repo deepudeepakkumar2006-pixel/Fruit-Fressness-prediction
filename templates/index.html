@@ -855,6 +855,26 @@
                 </label>
 
 
+                <!-- CAMERA CAPTURE (ADDITIVE) -->
+                <div style="margin-top: 14px; text-align: center;">
+                    <button type="button" id="openCameraBtn" style="background: #0f172a; color: #ffffff; border: none; padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                        ?? Use Live Camera
+                    </button>
+
+                    <div id="cameraBox" style="display: none; margin-top: 14px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc;">
+                        <video id="cameraStream" autoplay playsinline style="width: 100%; max-height: 260px; border-radius: 8px; background: #000;"></video>
+                        <canvas id="cameraCanvas" style="display: none;"></canvas>
+                        <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
+                            <button type="button" id="capturePhotoBtn" style="background: #16a34a; color: #ffffff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                                ?? Capture Photo
+                            </button>
+                            <button type="button" id="closeCameraBtn" style="background: #ef4444; color: #ffffff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                                ? Close Camera
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- SELECTED FILE -->
 
                 <div class="selected-file"
@@ -1831,6 +1851,63 @@
 
     }
 
+
+    /* LIVE CAMERA CAPTURE */
+    const openCameraBtn = document.getElementById("openCameraBtn");
+    const closeCameraBtn = document.getElementById("closeCameraBtn");
+    const capturePhotoBtn = document.getElementById("capturePhotoBtn");
+    const cameraBox = document.getElementById("cameraBox");
+    const cameraStream = document.getElementById("cameraStream");
+    const cameraCanvas = document.getElementById("cameraCanvas");
+    let activeMediaStream = null;
+
+    function stopCameraStream() {
+        if (activeMediaStream) {
+            activeMediaStream.getTracks().forEach(track => track.stop());
+            activeMediaStream = null;
+        }
+        cameraStream.srcObject = null;
+        cameraBox.style.display = "none";
+    }
+
+    if (openCameraBtn) {
+        openCameraBtn.addEventListener("click", async function () {
+            try {
+                activeMediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" },
+                    audio: false
+                });
+                cameraStream.srcObject = activeMediaStream;
+                cameraBox.style.display = "block";
+            } catch (err) {
+                alert("Unable to access camera. Please allow camera permission in your browser.");
+            }
+        });
+    }
+
+    if (closeCameraBtn) {
+        closeCameraBtn.addEventListener("click", stopCameraStream);
+    }
+
+    if (capturePhotoBtn) {
+        capturePhotoBtn.addEventListener("click", function () {
+            if (!cameraStream.videoWidth) return;
+            cameraCanvas.width = cameraStream.videoWidth;
+            cameraCanvas.height = cameraStream.videoHeight;
+            const ctx = cameraCanvas.getContext("2d");
+            ctx.drawImage(cameraStream, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+            cameraCanvas.toBlob(function (blob) {
+                const capturedFile = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+                const dt = new DataTransfer();
+                dt.items.add(capturedFile);
+                const imgInput = document.getElementById("image");
+                imgInput.files = dt.files;
+                imgInput.dispatchEvent(new Event("change"));
+                stopCameraStream();
+            }, "image/jpeg", 0.95);
+        });
+    }
 </script>
 
 
