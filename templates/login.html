@@ -12,10 +12,11 @@
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: Arial, Helvetica, sans-serif;
-            background: #f4f7fc;
+            background: linear-gradient(135deg, rgba(6, 24, 20, 0.42), rgba(15, 23, 42, 0.52)),
+                        url("{{ url_for('static', filename='images/food_3d_bg.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
             color: #0f172a;
             min-height: 100vh;
         }
@@ -96,13 +97,7 @@
 
             padding: 50px 20px;
 
-            background:
-                radial-gradient(
-                    circle at top left,
-                    #ffffff 0,
-                    #f4f7fc 45%,
-                    #edf3fc 100%
-                );
+            background: transparent;
         }
 
 
@@ -503,6 +498,60 @@
                 font-size: 25px;
             }
         }
+    
+        /* 3D GLASSMORPHISM UI POLISH */
+        .navbar {
+            background: rgba(255, 255, 255, 0.88) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.45) !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        .page {
+            align-items: center !important;
+            padding: 36px 20px 60px !important;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.93) !important;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.75) !important;
+            border-radius: 26px !important;
+            box-shadow: 0 28px 65px rgba(2, 6, 23, 0.42), 0 8px 20px rgba(16, 185, 129, 0.14) !important;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .login-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 34px 75px rgba(2, 6, 23, 0.48), 0 12px 28px rgba(16, 185, 129, 0.22) !important;
+        }
+        .signin-btn {
+            background: linear-gradient(135deg, #10b981 0%, #2563eb 100%) !important;
+            box-shadow: 0 10px 24px rgba(16, 185, 129, 0.32) !important;
+            border-radius: 14px !important;
+        }
+        .signin-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #1d4ed8 100%) !important;
+            transform: translateY(-2px) !important;
+        }
+        .fg-3d-badge {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 12px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 26px rgba(16, 185, 129, 0.25);
+            border: 2px solid #e2e8f0;
+        }
+        .fg-3d-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        footer, .footer {
+            background: rgba(255, 255, 255, 0.88) !important;
+            backdrop-filter: blur(12px);
+        }
+
     </style>
 </head>
 

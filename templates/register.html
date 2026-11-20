@@ -11,7 +11,6 @@
     <title>FreshGuard - Create Account</title>
 
     <style>
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -20,13 +19,15 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, rgba(6, 24, 20, 0.42), rgba(15, 23, 42, 0.52)),
+                        url("{{ url_for('static', filename='images/food_3d_bg.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            color: #0f172a;
             min-height: 100vh;
-            background: linear-gradient(135deg, #f8fafc, #eef4ff);
-            color: #172033;
         }
 
         .navbar {
-            height: 72px;
+            height: 74px;
             background: white;
             border-bottom: 1px solid #e2e8f0;
             display: flex;
@@ -58,10 +59,18 @@
         }
 
         .login-link {
+            border: 1px solid #bfdbfe;
+            background: #eff6ff;
             color: #2563eb;
+            padding: 10px 20px;
+            border-radius: 999px;
             text-decoration: none;
             font-size: 13px;
             font-weight: bold;
+            transition: 0.2s;
+        }
+        .login-link:hover {
+            background: #dbeafe;
         }
 
         .page {
@@ -215,8 +224,50 @@
             font-size: 11px;
         }
 
-    </style>
+    
+        /* 3D GLASSMORPHISM UI POLISH (MATCHING LOGIN) */
+        .navbar {
+            background: rgba(255, 255, 255, 0.88) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.45) !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        .page {
+            background: transparent !important;
+            padding: 36px 20px 60px !important;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.93) !important;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.75) !important;
+            border-radius: 26px !important;
+            box-shadow: 0 28px 65px rgba(2, 6, 23, 0.42), 0 8px 20px rgba(16, 185, 129, 0.14) !important;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 34px 75px rgba(2, 6, 23, 0.48), 0 12px 28px rgba(16, 185, 129, 0.22) !important;
+        }
+        button[type="submit"], .btn, .submit-btn, .register-btn {
+            background: linear-gradient(135deg, #10b981 0%, #2563eb 100%) !important;
+            box-shadow: 0 10px 24px rgba(16, 185, 129, 0.32) !important;
+            border-radius: 14px !important;
+            border: none !important;
+            color: #ffffff !important;
+            transition: 0.2s;
+        }
+        button[type="submit"]:hover, .btn:hover, .submit-btn:hover, .register-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #1d4ed8 100%) !important;
+            transform: translateY(-2px) !important;
+        }
+        footer, .footer {
+            background: rgba(255, 255, 255, 0.88) !important;
+            backdrop-filter: blur(12px);
+        }
 
+    </style>
 </head>
 
 <body>
